@@ -21,7 +21,7 @@ cd wacky-envs
 python setup.py install
 ```
 
-## Current TODOS:
+## Current TODO:
 
 - [ ] Reward functions 
 - [ ] Dataset reader
