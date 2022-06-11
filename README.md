@@ -38,7 +38,7 @@ If you use `wacky-envs` in your research, you can cite it as follows:
 
 ```bibtex
 @misc{schürmann2022wackyenvs,
-    author = {Maik Schürmann},
+    author = {Maik Schürmann, Aaron Haberkern, Boris Pastler},
     title = {wacky-envs},
     year = {2022},
     publisher = {GitHub},
