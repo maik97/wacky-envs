@@ -3,7 +3,7 @@
 Create your own custom reinforcement learning environments (or check out the prebuilt envs).
 With it's modular approach `wacky-envs` makes the implementation of reinforcement learning environments easy and flexible - without restricting you!
 
-See the [documentation](https://wacky-envs.rtfd.io) for a detailed explanation on creating your own agents with `wacky-rl`.
+See the [documentation](https://wacky-envs.rtfd.io) for a detailed explanation on creating your own environments with `wacky-rl`.
 
 ## Installation
 
