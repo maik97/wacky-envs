@@ -16,7 +16,7 @@ pip install wacky-envs
 - Install with git:
 
 ```
-git clone https://github.com/maik97/wacky-rl.git
+git clone https://github.com/maik97/wacky-envs.git
 cd wacky-envs
 python setup.py install
 ```

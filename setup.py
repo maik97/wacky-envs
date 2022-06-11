@@ -9,7 +9,7 @@ setup(
     description='Create custom reinforcement learning environments with wacky-rl.',
     author='Maik Schürmann',
     author_email='maik.schuermann97@gmail.com',
-    url='https://github.com/maik97/wacky-rl',
+    url='https://github.com/maik97/wacky-envs',
     download_url='https://github.com/maik97/wacky-envs/archive/refs/tags/v0.0.1.tar.gz',
     keywords=['rl', 'reinforcement-learning', 'environments', 'envs', 'python'],
     install_requires=[
