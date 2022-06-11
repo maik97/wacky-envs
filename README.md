@@ -21,6 +21,12 @@ cd wacky-envs
 python setup.py install
 ```
 
+## Current TODOS:
+
+- [ ] Reward functions 
+- [ ] Dataset reader
+- [ ] Terminal conditions
+
 ## Dependencies
 
 - gym >= 0.17.3
