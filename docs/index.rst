@@ -13,6 +13,10 @@ Contents
 
    intro/installation
 
+   :caption: Modules:
+
+   modules/constraints
+
 Indices and tables
 ==================
 
