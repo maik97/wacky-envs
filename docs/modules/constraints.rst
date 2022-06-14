@@ -1,5 +1,5 @@
 
-logger
+Constraints
 ======
 
 .. toctree::
@@ -8,6 +8,6 @@ logger
 
 
 
-.. automodule:: wacky_envs.constraints
+.. automodule:: constraints
    :members:
 
