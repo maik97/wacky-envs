@@ -1,6 +1,6 @@
 
 Wacky Environments!
-=========
+===================
 
 Create custom RL environments
 
@@ -13,7 +13,9 @@ Contents
 
    intro/installation
 
-   :caption: Modules:
+.. toctree::
+   :maxdepth: 2
+   :caption: Module Documentations:
 
    modules/constraints
 
