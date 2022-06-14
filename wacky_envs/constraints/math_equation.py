@@ -12,10 +12,12 @@ class WackyMath:
         #  https://docs.python.org/3/library/ast.html#ast.literal_eval
         self.equation = equation  # ast.literal_eval(equation)
 
-    def __call__(self, additional_vars: dict = None) -> [float, int]:
+    def __call__(self, additional_vars: dict = None) -> [float, int, bool]:
         temp_dict = copy.deepcopy(self.var_dict)
         if additional_vars is not None:
             temp_dict.update(additional_vars)
+        #print(self.equation)
+        #print(temp_dict)
         return eval(self.equation, temp_dict)
 
     @property
@@ -28,14 +30,12 @@ class WackyMath:
         if var_dict is not None:
             self.var_dict = var_dict
 
-    def step(self, value, delta_t, t):
-        """
+    def step(self, delta_t, t):
+        self.var_dict['delta_t'] = delta_t
+        self.var_dict['t'] = t
 
-        :param delta_t: Timeframe
-        :param t: Total episode time
-        :return: Solution of the equation
-        """
-        temp_dict = copy.deepcopy(self.var_dict)
+    def take_step(self, value, delta_t, t):
+        temp_dict = self.var_dict.copy()
         temp_dict['value'] = value
         temp_dict['delta_t'] = delta_t
         temp_dict['t'] = t

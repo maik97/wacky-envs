@@ -3,6 +3,17 @@ from wacky_envs.constraints import FloatConstr, IntConstr, WackyMath, WackyFloat
 
 
 @dataclass
+class ValueUpdate:
+
+    def __init__(self, to_update, set_from):
+        self.to_update = to_update
+        self.set_from = set_from
+
+    def __call__(self):
+        self.to_update.delta(self.to_update - self.set_from.value)
+        self.to_update.accept(self.to_update.to_accept_op_x, self.to_update.to_accept_op_time)
+
+@dataclass
 class ValueTransfer:
 
     delta_x: [IntConstr, FloatConstr, WackyMath]

@@ -28,11 +28,15 @@ class WackyEnv(gym.Env):
 
     @property
     def observation_space(self):
-        return self._obs.space()
+        """
+
+        :return:
+        """
+        return self._obs.space
 
     @property
     def action_space(self):
-        return self._action.space()
+        return self._action.space
 
     @property
     def observation(self):
@@ -60,9 +64,12 @@ class WackyEnv(gym.Env):
 
     def step(self, action):
         self._action(action)
+
         if self.step_vars is not None:
             for var in self.step_vars:
                 var.step(self.t, self.delta_t)
+
+        self._stepper.next()
         self._terminator.step(self.t, self.delta_t)
         return self.observation, self.reward, self.done, self.info
 

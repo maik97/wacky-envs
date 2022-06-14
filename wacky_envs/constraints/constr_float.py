@@ -1,6 +1,8 @@
 import numpy as np
 from dataclasses import dataclass, field
+from collections import deque
 from wacky_envs.constraints import WackyFloat, WackyMath
+from wacky_envs.data_handler import DataframeFixStepper
 
 
 @dataclass
@@ -32,6 +34,7 @@ class FloatConstr(WackyFloat):
     errors: np.ndarray = field(default=np.zeros(2))
     op_x: float = field(default=0)
     op_time: float = field(default=0.0)
+    delta_op_x: float = field(default=0.0)
 
     def __init__(
             self,
@@ -40,13 +43,12 @@ class FloatConstr(WackyFloat):
             lowerbound: [WackyMath, WackyFloat, float] = None,
             rate_add: [WackyMath, WackyFloat, float] = None,
             rate_sub: [WackyMath, WackyFloat, float] = None,
-            func_time: WackyMath = None,
+            func_time: [WackyMath, DataframeFixStepper] = None,
             action_lock: bool = False,
             name: str = None,
     ) -> None:
-        self._init_value = init_value
+        self._prev_step_values = deque(maxlen=2)
         super().__init__(init_value)
-        self.reset()
 
         self.name = name if name is not None else self.__class__.__name__
         self.upperbound = self._init_val(upperbound)
@@ -55,14 +57,6 @@ class FloatConstr(WackyFloat):
         self.rate_sub = self._init_val(rate_sub)
         self.func_time = self._init_func_time(func_time)
         self.action_lock = action_lock
-
-    @property
-    def value(self) -> float:
-        return self._value
-
-    @property
-    def init_value(self) -> float:
-        return self._init_value
 
     @property
     def is_operating(self) -> bool:
@@ -110,29 +104,48 @@ class FloatConstr(WackyFloat):
             raise TypeError(f'Expected type: float, WackyFloat, WackyMath. Got {type(val)} instead.')
 
     @staticmethod
-    def _init_func_time(val) -> [None, WackyMath]:
+    def _init_func_time(val) -> [None, WackyMath, DataframeFixStepper]:
         if val is None:
             return None
-        elif isinstance(val, WackyMath):
+        elif isinstance(val, (WackyMath, DataframeFixStepper)):
             return val
         else:
-            raise TypeError(f'Expected type: WackyMath. Got {type(val)} instead.')
-
-    def set_init_value(self, init_value) -> None:
-        if not isinstance(init_value, float):
-            raise TypeError(f"Expected type float, got {type(init_value)} instead")
-        self._init_value = init_value
-
-    def set(self, value) -> None:
-        if not isinstance(value, float):
-            raise TypeError(f"Expected type float, got {type(value)} instead")
-        self._value = value
+            raise TypeError(f'Expected type: WackyMath, DataframeFixStepper. Got {type(val)} instead.')
 
     def reset(self) -> None:
-        self.set(self.init_value)
+        super(FloatConstr, self).reset()
+
+        for _ in range(self._prev_step_values.maxlen):
+            self._prev_step_values.append(self.init_value)
+
         self.errors = np.zeros(shape=2)
         self.op_x = 0.0
         self.op_time = 0.0
+        self.delta_op_x = 0.0
+
+    @property
+    def delta_step(self) -> float:
+        """
+        Total value difference between current and last step.
+        Usually: delta_step >= delta_op >= delta_value
+        """
+        return self._prev_step_values[-1] - self._prev_step_values[-2]
+
+    @property
+    def delta_op(self) -> float:
+        """
+        Amount from the last operation.
+        Usually: delta_step >= delta_op >= delta_value
+        """
+        return self.delta_op_x
+
+    @property
+    def delta_value(self) -> float:
+        """
+        Difference between new value and previous value after calling the set() method.
+        Usually: delta_step >= delta_op >= delta_value
+        """
+        return super(FloatConstr, self).delta_value
 
     def delta(self, x: float) -> None:
 
@@ -166,11 +179,14 @@ class FloatConstr(WackyFloat):
 
     def accept(self, x, delta_t):
         self.op_time = delta_t
+
         if delta_t == 0.0:
             self.set(self.value + x)
+            self.delta_op_x = x
             self.op_x = 0.0
         else:
             self.op_x = x
+            self.delta_op_x = 0.0
 
     def wait(self, delta_t: float) -> None:
         if not self.is_waiting and not self.is_operating:
@@ -180,6 +196,7 @@ class FloatConstr(WackyFloat):
 
         if self.is_operating:
             if self.op_time <= delta_t:
+                self.delta_op_x = self.op_x
                 self.set(self.op_x + self.value)
                 self.op_x = 0.0
                 self.op_time = 0.0
@@ -187,7 +204,7 @@ class FloatConstr(WackyFloat):
                 self.op_time -= delta_t
 
         if self.func_time is not None:
-            self.set(self.func_time.step(self.value, t, delta_t))
+            self.set(float(self.func_time.take_step(self.value, t, delta_t)))
 
         if self.lowerbound is not None:
             x_low = max(self.value, self.lowerbound.value)
@@ -201,6 +218,8 @@ class FloatConstr(WackyFloat):
 
         self.set(max(x_low, x_up))
         self.errors = np.zeros(shape=2)
+
+        self._prev_step_values.append(self.value)
 
 
 def main():

@@ -1,23 +1,38 @@
 import sys
 from typing import Tuple, overload
+from wacky_envs.constraints import WackyNumber
 
 
-class WackyFloat:
-
-    def __init__(self, value: float):
-        self.set(value)
-
-    def step(self, *args, **kwargs):
-        return self._value
-
-    def set(self, value):
-        if not isinstance(value, float):
-            raise TypeError(f"Expected type float, got {type(value)} instead")
-        self._value = value
+class WackyFloat(WackyNumber):
 
     @property
-    def value(self):
-        return self._value
+    def dtype(self) -> type:
+        return float
+
+    def __init__(self, init_value: float):
+        super(WackyFloat, self).__init__(init_value)
+
+    def set_init(self, init_value: float) -> None:
+        super(WackyFloat, self).set_init(init_value)
+
+    def set(self, value: float) -> None:
+        super(WackyFloat, self).set(value)
+
+    @property
+    def value(self) -> float:
+        return super(WackyFloat, self).value
+
+    @property
+    def init_value(self) -> float:
+        return super(WackyFloat, self).init_value
+
+    @property
+    def prev_value(self) -> float:
+        return super(WackyFloat, self).prev_value
+
+    @property
+    def delta_value(self) -> float:
+        return super(WackyFloat, self).delta_value
 
     def as_integer_ratio(self) -> Tuple[int, int]:
         return self._value.as_integer_ratio()
@@ -44,58 +59,58 @@ class WackyFloat:
         return self._value.conjugate()
 
     def __add__(self, x: float) -> float:
-        return self._value.__add__(x)
+        return self._value.__add__(self.read_other(x))
 
     def __sub__(self, x: float) -> float:
-        return self._value.__sub__(x)
+        return self._value.__sub__(self.read_other(x))
 
     def __mul__(self, x: float) -> float:
-        return self._value.__mul__(x)
+        return self._value.__mul__(self.read_other(x))
 
     def __floordiv__(self, x: float) -> float:
-        return self._value.__floordiv__(x)
+        return self._value.__floordiv__(self.read_other(x))
 
     if sys.version_info < (3,):
-        def __div__(self, x: float) -> float: return self._value.__div__(x)
+        def __div__(self, x: float) -> float: return self._value.__div__(self.read_other(x))
 
     def __truediv__(self, x: float) -> float:
-        return self._value.__truediv__(x)
+        return self._value.__truediv__(self.read_other(x))
 
     def __mod__(self, x: float) -> float:
-        return self._value.__mod__(x)
+        return self._value.__mod__(self.read_other(x))
 
     def __divmod__(self, x: float) -> Tuple[float, float]:
-        return self._value.__divmod__(x)
+        return self._value.__divmod__(self.read_other(x))
 
     def __pow__(self, x: float) -> float:
-        return self._value.__pow__(x)  # In Python 3, returns complex if self is negative and x is not whole
+        return self._value.__pow__(self.read_other(x))  # In Python 3, returns complex if self is negative and x is not whole
 
     def __radd__(self, x: float) -> float:
-        return self._value.__radd__(x)
+        return self._value.__radd__(self.read_other(x))
 
     def __rsub__(self, x: float) -> float:
-        return self._value.__rsub__(x)
+        return self._value.__rsub__(self.read_other(x))
 
     def __rmul__(self, x: float) -> float:
-        return self._value.__rmul__(x)
+        return self._value.__rmul__(self.read_other(x))
 
     def __rfloordiv__(self, x: float) -> float:
-        return self._value.__rfloordiv__(x)
+        return self._value.__rfloordiv__(self.read_other(x))
 
     if sys.version_info < (3,):
-        def __rdiv__(self, x: float) -> float: return self._value.__rdiv__(x)
+        def __rdiv__(self, x: float) -> float: return self._value.__rdiv__(self.read_other(x))
 
     def __rtruediv__(self, x: float) -> float:
-        return self._value.__rtruediv__(x)
+        return self._value.__rtruediv__(self.read_other(x))
 
     def __rmod__(self, x: float) -> float:
-        return self._value.__rmod__(x)
+        return self._value.__rmod__(self.read_other(x))
 
     def __rdivmod__(self, x: float) -> Tuple[float, float]:
-        return self._value.__rdivmod__(x)
+        return self._value.__rdivmod__(self.read_other(x))
 
     def __rpow__(self, x: float) -> float:
-        return self._value.__rpow__(x)
+        return self._value.__rpow__(self.read_other(x))
 
     def __getnewargs__(self) -> Tuple[float]:
         return self._value.__getnewargs__()
@@ -111,22 +126,22 @@ class WackyFloat:
         def __round__(self, ndigits: int) -> float: return self._value.__round__(ndigits)
 
     def __eq__(self, x: object) -> bool:
-        return self._value.__eq__(x)
+        return self._value.__eq__(self.read_other(x))
 
     def __ne__(self, x: object) -> bool:
-        return self._value.__ne__(x)
+        return self._value.__ne__(self.read_other(x))
 
     def __lt__(self, x: float) -> bool:
-        return self._value.__lt__(x)
+        return self._value.__lt__(self.read_other(x))
 
     def __le__(self, x: float) -> bool:
-        return self._value.__le__(x)
+        return self._value.__le__(self.read_other(x))
 
     def __gt__(self, x: float) -> bool:
-        return self._value.__gt__(x)
+        return self._value.__gt__(self.read_other(x))
 
     def __ge__(self, x: float) -> bool:
-        return self._value.__ge__(x)
+        return self._value.__ge__(self.read_other(x))
 
     def __neg__(self) -> float:
         return self._value.__neg__()
@@ -180,6 +195,19 @@ def main():
     print(test_arr)
     print(test_arr.shape)
     print(test_arr.dtype)
+
+    print(WackyFloat(1.0) - test_float)
+    print(WackyFloat(1.0) * test_float)
+    print(WackyFloat(1.0) / test_float)
+    print(WackyFloat(1.0) + test_float)
+
+    test_float.set(1.0)
+    print(test_float.value)
+    try:
+        test_float.set(1)
+    except Exception as e:
+        print('test exception:')
+        print(e)
 
 
 if __name__ == '__main__':

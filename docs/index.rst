@@ -1,12 +1,8 @@
-.. RL-TSP-VRP-D documentation master file, created by
-   sphinx-quickstart on Thu Jun  3 14:43:38 2021.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
-Wacky RL!
+Wacky Environments!
 =========
 
-Create custom RL agents
+Create custom RL environments
 
 Contents
 ========

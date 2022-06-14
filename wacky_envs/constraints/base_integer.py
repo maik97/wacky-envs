@@ -1,23 +1,38 @@
 import sys
 from typing import Optional, Tuple, Any
+from wacky_envs.constraints import WackyNumber
 
 
-class WackyInt:
-
-    def __init__(self, value: int):
-        self.set(value)
-
-    def step(self, *args, **kwargs):
-        return self._value
-
-    def set(self, value):
-        if not isinstance(value, int):
-            raise TypeError(f"Expected type int, got {type(value)} instead")
-        self._value = value
+class WackyInt(WackyNumber):
 
     @property
-    def value(self):
-        return self._value
+    def dtype(self) -> type:
+        return int
+
+    def __init__(self, init_value: int):
+        super(WackyInt, self).__init__(init_value)
+
+    def set_init(self, init_value: int) -> None:
+        super(WackyInt, self).set_init(init_value)
+
+    def set(self, value: int) -> None:
+        super(WackyInt, self).set(value)
+
+    @property
+    def value(self) -> int:
+        return super(WackyInt, self).value
+
+    @property
+    def init_value(self) -> int:
+        return super(WackyInt, self).init_value
+
+    @property
+    def prev_value(self) -> int:
+        return super(WackyInt, self).prev_value
+
+    @property
+    def delta_value(self) -> int:
+        return super(WackyInt, self).delta_value
 
     @property
     def real(self) -> int:
@@ -49,88 +64,88 @@ class WackyInt:
         def from_bytes(cls, *args, **kwargs) -> int: return int.from_bytes(*args, **kwargs)
 
     def __add__(self, x: int) -> int:
-        return self._value.__add__(x)
+        return self._value.__add__(self.read_other(x))
 
     def __sub__(self, x: int) -> int:
-        return self._value.__sub__(x)
+        return self._value.__sub__(self.read_other(x))
 
     def __mul__(self, x: int) -> int:
-        return self._value.__mul__(x)
+        return self._value.__mul__(self.read_other(x))
 
     def __floordiv__(self, x: int) -> int:
-        return self._value.__floordiv__(x)
+        return self._value.__floordiv__(self.read_other(x))
 
     if sys.version_info < (3,):
         def __div__(self, x: int) -> int: return self._value.__div__(x)
 
     def __truediv__(self, x: int) -> float:
-        return self._value.__truediv__(x)
+        return self._value.__truediv__(self.read_other(x))
 
     def __mod__(self, x: int) -> int:
-        return self._value.__mod__(x)
+        return self._value.__mod__(self.read_other(x))
 
     def __divmod__(self, x: int) -> Tuple[int, int]:
-        return self._value.__divmod__(x)
+        return self._value.__divmod__(self.read_other(x))
 
     def __radd__(self, x: int) -> int:
-        return self._value.__radd__(x)
+        return self._value.__radd__(self.read_other(x))
 
     def __rsub__(self, x: int) -> int:
-        return self._value.__rsub__(x)
+        return self._value.__rsub__(self.read_other(x))
 
     def __rmul__(self, x: int) -> int:
-        return self._value.__rmul__(x)
+        return self._value.__rmul__(self.read_other(x))
 
     def __rfloordiv__(self, x: int) -> int:
-        return self._value.__rfloordiv__(x)
+        return self._value.__rfloordiv__(self.read_other(x))
 
     if sys.version_info < (3,):
-        def __rdiv__(self, x: int) -> int: return self._value.__rdiv__(x)
+        def __rdiv__(self, x: int) -> int: return self._value.__rdiv__(self.read_other(x))
 
     def __rtruediv__(self, x: int) -> float:
-        return self._value.__rtruediv__(x)
+        return self._value.__rtruediv__(self.read_other(x))
 
     def __rmod__(self, x: int) -> int:
-        return self._value.__rmod__(x)
+        return self._value.__rmod__(self.read_other(x))
 
     def __rdivmod__(self, x: int) -> Tuple[int, int]:
-        return self._value.__rdivmod__(x)
+        return self._value.__rdivmod__(self.read_other(x))
 
     def __pow__(self, __x: int, __modulo: Optional[int] = ...) -> Any:
-        return self._value.__pow__(__x)  # Return type can be int or float, depending on x.
+        return self._value.__pow__(self.read_other(__x))  # Return type can be int or float, depending on x.
 
     def __rpow__(self, x: int) -> Any:
-        return self._value.__rpow__(x)
+        return self._value.__rpow__(self.read_other(x))
 
     def __and__(self, n: int) -> int:
-        return self._value.__and__(n)
+        return self._value.__and__(self.read_other(n))
 
     def __or__(self, n: int) -> int:
-        return self._value.__or__(n)
+        return self._value.__or__(self.read_other(n))
 
     def __xor__(self, n: int) -> int:
-        return self._value.__xor__(n)
+        return self._value.__xor__(self.read_other(n))
 
     def __lshift__(self, n: int) -> int:
-        return self._value.__lshift__(n)
+        return self._value.__lshift__(self.read_other(n))
 
     def __rshift__(self, n: int) -> int:
-        return self._value.__rshift__(n)
+        return self._value.__rshift__(self.read_other(n))
 
     def __rand__(self, n: int) -> int:
-        return self._value.__rand__(n)
+        return self._value.__rand__(self.read_other(n))
 
     def __ror__(self, n: int) -> int:
-        return self._value.__ror__(n)
+        return self._value.__ror__(self.read_other(n))
 
     def __rxor__(self, n: int) -> int:
-        return self._value.__rxor__(n)
+        return self._value.__rxor__(self.read_other(n))
 
     def __rlshift__(self, n: int) -> int:
-        return self._value.__rlshift__(n)
+        return self._value.__rlshift__(self.read_other(n))
 
     def __rrshift__(self, n: int) -> int:
-        return self._value.__rrshift__(n)
+        return self._value.__rrshift__(self.read_other(n))
 
     def __neg__(self) -> int:
         return self._value.__neg__()
@@ -155,22 +170,22 @@ class WackyInt:
         return self._value.__getnewargs__()
 
     def __eq__(self, x: object) -> bool:
-        return self._value.__eq__(x)
+        return self._value.__eq__(self.read_other(x))
 
     def __ne__(self, x: object) -> bool:
-        return self._value.__ne__(x)
+        return self._value.__ne__(self.read_other(x))
 
     def __lt__(self, x: int) -> bool:
-        return self._value.__lt__(x)
+        return self._value.__lt__(self.read_other(x))
 
     def __le__(self, x: int) -> bool:
-        return self._value.__le__(x)
+        return self._value.__le__(self.read_other(x))
 
     def __gt__(self, x: int) -> bool:
-        return self._value.__gt__(x)
+        return self._value.__gt__(self.read_other(x))
 
     def __ge__(self, x: int) -> bool:
-        return self._value.__ge__(x)
+        return self._value.__ge__(self.read_other(x))
 
     '''def __str__(self) -> str:
         return self._value.__str__()'''
@@ -221,6 +236,13 @@ def main():
     print(test_arr)
     print(test_arr.shape)
     print(test_arr.dtype)
+
+    from wacky_envs.constraints import WackyFloat
+
+    print(WackyFloat(1.0) - test_int)
+    print(WackyFloat(1.0) * test_int)
+    print(WackyFloat(1.0) / test_int)
+    print(WackyFloat(1.0) + test_int)
 
 
 if __name__ == '__main__':
