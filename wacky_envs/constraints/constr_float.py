@@ -47,6 +47,8 @@ class FloatConstr(WackyFloat):
             action_lock: bool = False,
             name: str = None,
     ) -> None:
+        """Subclass of :class:`wacky_envs.constraints.WackyFloat`"""
+
         self._prev_step_values = deque(maxlen=2)
         super().__init__(init_value)
 
@@ -60,18 +62,30 @@ class FloatConstr(WackyFloat):
 
     @property
     def is_operating(self) -> bool:
+        """Checks if value will change during the current step."""
         return self.op_x != 0.0
 
     @property
     def is_waiting(self) -> bool:
+        """Might not be used in the future. Is true if value does not change in the current step,
+        but the operation timeframe is not zero."""
         return self.op_x == 0.0 and self.op_time != 0.0
 
     @property
     def error_signal(self) -> bool:
+        """Checks if anything was invalid when :method:`wacky_envs.constraints.IntConstr.delta` was called"""
         return bool(np.any(self.errors))
 
     @property
     def op_name(self) -> str:
+        """
+        Name of the current operation when :method:`wacky_envs.constraints.IntConstr.step` is called.
+
+        - 'None': Nothing happens. Assigning a new operation is valid.
+        - 'add': Some amount will be added to the current value.
+        - 'sub': Some amount will be subtracted to the current value.
+        - 'wait': Nothing happens, but assigning a new operation is not valid.
+        """
         if self.op_x == 0.0 and self.op_time == 0.0:
             return 'None'
         elif self.op_x > 0.0 and self.op_time != 0.0:
@@ -83,6 +97,14 @@ class FloatConstr(WackyFloat):
 
     @property
     def op_id(self) -> int:
+        """
+        Id of the current operation when :method:`wacky_envs.constraints.IntConstr.step` is called.
+
+        - 0: 'None'
+        - 1: 'add'
+        - 2: 'sub'
+        - 3: 'wait'
+        """
         if self.op_x == 0.0 and self.op_time == 0.0:
             return 0
         elif self.op_x > 0.0 and self.op_time != 0.0:
@@ -94,6 +116,7 @@ class FloatConstr(WackyFloat):
 
     @staticmethod
     def _init_val(val) -> [None, WackyFloat, WackyMath]:
+        '''Checks if parameter values are the right type. Converts integers to WackyFloat.'''
         if val is None:
             return None
         elif isinstance(val, float):
@@ -105,6 +128,7 @@ class FloatConstr(WackyFloat):
 
     @staticmethod
     def _init_func_time(val) -> [None, WackyMath, DataframeFixStepper]:
+        '''Checks if parameter func_time is the right type.'''
         if val is None:
             return None
         elif isinstance(val, (WackyMath, DataframeFixStepper)):
@@ -148,6 +172,7 @@ class FloatConstr(WackyFloat):
         return super(FloatConstr, self).delta_value
 
     def delta(self, x: float) -> None:
+        """Sets up a possible value change based on the restrictions. Must be confirmed in the accept method."""
 
         if self.upperbound is not None and x > 0.0:
             if (self.value + x) > self.upperbound.value:
@@ -178,6 +203,7 @@ class FloatConstr(WackyFloat):
             self.to_accept_op_x = x
 
     def accept(self, x, delta_t):
+        """Accept the value change with the corresponding timeframe"""
         self.op_time = delta_t
 
         if delta_t == 0.0:
@@ -189,10 +215,12 @@ class FloatConstr(WackyFloat):
             self.delta_op_x = 0.0
 
     def wait(self, delta_t: float) -> None:
+        """Set up waiting time with delta_t as the timeframe"""
         if not self.is_waiting and not self.is_operating:
             self.op_time = delta_t
 
     def step(self, t: float, delta_t: float) -> None:
+        """Complete the accepted operation if current timeframe delta_t is <= the required operation time."""
 
         if self.is_operating:
             if self.op_time <= delta_t:

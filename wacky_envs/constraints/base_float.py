@@ -7,9 +7,11 @@ class WackyFloat(WackyNumber):
 
     @property
     def dtype(self) -> type:
+        """Datatype `float` for all object values (e.g., `value`, `init_value`, `prev_value`, `delta_value`, ect.)"""
         return float
 
     def __init__(self, init_value: float):
+        """Subclass of :class:`wacky_envs.constraints.WackyNumber`"""
         super(WackyFloat, self).__init__(init_value)
 
     def set_init(self, init_value: float) -> None:

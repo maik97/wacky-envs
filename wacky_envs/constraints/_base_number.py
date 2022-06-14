@@ -65,20 +65,20 @@ class WackyNumber(ABC):
 
     @property
     def prev_value(self) -> Any:
-        """Value from before the :func:`wacky_envs.constraints.WackyNumber.set` method was called."""
+        """Value from before the :method:`wacky_envs.constraints.WackyNumber.set()` method was called."""
         return self._prev_value
 
     @property
     def delta_value(self) -> Any:
         """
         Difference between new value and previous value
-        after calling the :func:`wacky_envs.constraints.WackyNumber.set` method.
+        after calling the :method:`wacky_envs.constraints.WackyNumber.set()` method.
         """
         return self.value - self.prev_value
 
     def step(self, _, __) -> None:
         """
-        Placeholder method, which might be called in :func:`wacky_envs.WackyEnv.step`
+        Placeholder method, which might be called in :method:`wacky_envs.WackyEnv.step()`
 
         :param _: Placeholder for the parameter `t` (current step)
         :param __: Placeholder for the parameter `delta_t` (current timeframe)
