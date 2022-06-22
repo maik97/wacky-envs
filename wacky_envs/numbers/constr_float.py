@@ -6,7 +6,7 @@ from gym import spaces
 
 from wacky_envs.numbers import WackyFloat, WackyMath
 from wacky_envs.dataframes import FixStepperDataframe
-from _old.decisions import ByIndex
+from wacky_envs.indexer import ByIndex
 
 
 @dataclass
