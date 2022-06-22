@@ -49,6 +49,8 @@ extensions = [
     'sphinx.ext.inheritance_diagram',
 ]
 
+autosummary_mock_imports = ['torch', 'numpy', 'scipy', 'pandas', 'matplotlib', 'pygame', 'gym']
+autosummary_generate = True
 
 #plantuml = 'java -jar plantuml.jar'
 
@@ -70,9 +72,9 @@ language = 'python'
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
+
 autodoc_mock_imports = ['torch', 'numpy', 'scipy', 'pandas', 'matplotlib', 'pygame', 'gym']
-autosummary_mock_imports = ['torch', 'numpy', 'scipy', 'pandas', 'matplotlib', 'pygame', 'gym']
-autosummary_generate = True
+
 
 autodoc_member_order = 'bysource'
 
