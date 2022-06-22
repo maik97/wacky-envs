@@ -15,9 +15,17 @@ Contents
 
 .. toctree::
    :maxdepth: 2
-   :caption: Module Documentations:
+   :caption: Documentation:
 
-   modules/constraints
+   modules/0_env
+   modules/1_numbers
+   modules/arrays
+   modules/callables
+   modules/dataframes
+   modules/indexer
+   modules/steppers
+   modules/actions
+   modules/observations
 
 Indices and tables
 ==================

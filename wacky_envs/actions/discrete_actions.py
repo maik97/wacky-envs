@@ -1,11 +1,15 @@
 from gym import spaces
 import numpy as np
-from wacky_envs.constraints import IntConstr, FloatConstr
+from wacky_envs.numbers import FloatConstr
+from wacky_envs.numbers import IntConstr
+from wacky_envs.actions import BaseAction
 
 
-class DiscreteAction:
+class DiscreteAction(BaseAction):
 
     def __init__(self, changeable_decision):
+        """Test"""
+        super(DiscreteAction, self).__init__()
         self.changeable_decision = changeable_decision
 
     def __call__(self, action):
@@ -20,7 +24,7 @@ class DiscreteAction:
         return spaces.Discrete(self.changeable_decision.n)
 
 
-class AtomizedAction:
+class AtomizedAction(BaseAction):
 
     def __init__(
             self,
@@ -29,6 +33,7 @@ class AtomizedAction:
             step_size: [int, float] = None,
             suppress_int_exception=False,
     ):
+        super(AtomizedAction, self).__init__()
 
         if n_atoms is None and step_size is None:
             raise AttributeError('Both n_atoms and step_size are None.')
@@ -70,9 +75,10 @@ class AtomizedAction:
         return spaces.Discrete(self.n_atoms)
 
 
-class DiscreteSinglesToMulti:
+class DiscreteSinglesToMulti(BaseAction):
 
     def __init__(self, single_discretes: list):
+        super(DiscreteSinglesToMulti, self).__init__()
         self.single_discretes = single_discretes
 
     def __call__(self, action):

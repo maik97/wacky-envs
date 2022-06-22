@@ -1,17 +1,19 @@
 from gym import spaces
 import numpy as np
 
+from wacky_envs.observations import BaseObs
 
-class BoxObs:
+
+class BoxObs(BaseObs):
 
     def __init__(self, value_list: list):
+        super(BoxObs, self).__init__()
         self.value_list = value_list
 
     def __call__(self):
         obs = np.array([])
         for v in self.value_list:
             obs = np.append(obs, v.value)
-        #print(obs)
         return obs
 
     @property
