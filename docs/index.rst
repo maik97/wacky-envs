@@ -24,7 +24,6 @@ Contents
    modules/dataframes
    modules/indexer
    modules/steppers
-   modules/actions
    modules/observations
 
 Indices and tables
