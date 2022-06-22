@@ -71,6 +71,7 @@ language = 'python'
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 autodoc_mock_imports = ['torch', 'numpy', 'scipy', 'pandas', 'matplotlib', 'pygame', 'gym']
+autosummary_mock_imports = autodoc_mock_imports
 
 autodoc_member_order = 'bysource'
 
