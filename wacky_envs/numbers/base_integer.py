@@ -8,20 +8,23 @@ from wacky_envs.numbers import WackyNumber
 
 
 class WackyInt(WackyNumber):
+    """Instance of changeable integer."""
 
     @property
     def dtype(self) -> type:
-        """Datatype `int` for all object values (e.g., `value`, `init_value`, `prev_value`, `delta_value`, ect.)"""
+        """Datatype for `value`, `init_value`, `prev_value`, `delta_value`, ect."""
         return int
 
-    def __init__(self, init_value: int):
-        """Subclass of :class:`wacky_envs.numbers.WackyNumber`"""
+    def __init__(self, init_value: int, name:str = None):
         super(WackyInt, self).__init__(init_value)
+        self._name = name
 
     def set_init(self, init_value: int) -> None:
+        """Update initial value."""
         super(WackyInt, self).set_init(init_value)
 
     def set(self, value: int) -> None:
+        """Update current value."""
         super(WackyInt, self).set(int(value))
 
     @property
@@ -46,32 +49,41 @@ class WackyInt(WackyNumber):
 
     @property
     def real(self) -> int:
+        """(From python integer) Returns the real part."""
         return self._value.real
 
     @property
     def imag(self) -> int:
+        """(From python integer) Returns the imaginary part."""
         return self._value.imag
 
     @property
     def numerator(self) -> int:
+        """(From python integer) Integers are their own numerators."""
         return self._value.numerator
 
     @property
     def denominator(self) -> int:
+        """(From python integer) Integers have a denominator of 1."""
         return self._value.denominator
 
     def conjugate(self) -> int:
+        """(From python integer) Returns the complex conjugate."""
         return self._value.conjugate()
 
     def bit_length(self) -> int:
+        """(From python integer) Returns the number of bits necessary to represent an integer in binary, excluding the sign and leading zeros."""
         return self._value.bit_length()
 
     if sys.version_info >= (3,):
         def to_bytes(self, *args, **kwargs) -> bytes:
+            """(From python integer) Return an array of bytes representing an integer."""
             return self._value.to_bytes(*args, **kwargs)
 
         @classmethod
-        def from_bytes(cls, *args, **kwargs) -> int: return int.from_bytes(*args, **kwargs)
+        def from_bytes(cls, *args, **kwargs) -> int:
+            """(From python integer) Return the integer represented by the given array of bytes."""
+            return int.from_bytes(*args, **kwargs)
 
     def __add__(self, x: int) -> int:
         return self._value.__add__(self.read_other(x))

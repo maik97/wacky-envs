@@ -4,6 +4,7 @@ from wacky_envs import ValueEnvModule
 
 
 class BaseDataframe(ValueEnvModule):
+    """Base module for dataframes."""
 
     def __init__(self, df, dtype=float):
         super(ValueEnvModule, self).__init__()
@@ -25,6 +26,7 @@ class BaseDataframe(ValueEnvModule):
 
 
 class StepperDataframe(BaseDataframe):
+    """Base module for dataframes indexed by step count or timeframe."""
 
     def __init__(self, df, dtype=float):
         super(StepperDataframe, self).__init__(df, dtype)

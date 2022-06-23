@@ -4,9 +4,11 @@ from wacky_envs import ValueEnvModule
 
 
 class BaseArray(ValueEnvModule):
+    """Base Module for arrays."""
 
     @property
     def dtype(self) -> type:
+        """Datatype np.ndarray for `value`, `init_value`, `prev_value`, `delta_value`, ect."""
         return np.ndarray
 
     def __init__(
@@ -15,7 +17,12 @@ class BaseArray(ValueEnvModule):
             low = None,
             high = None,
     ):
-        """Test"""
+        """
+
+        :param value:
+        :param low:
+        :param high:
+        """
         super(BaseArray, self).__init__(value)
         if value is not None:
             self._shape = value.shape
@@ -54,7 +61,7 @@ class BaseArray(ValueEnvModule):
             'value': self.value,
             'init_value': self.init_value,
             'prev_value': self.prev_value,
-            'delta_x': self.delta_x,
+            'delta_value': self.delta_value,
             'low': self.low,
             'high': self.high,
         }

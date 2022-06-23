@@ -8,6 +8,7 @@ from typing import Any
 
 @dataclass
 class BaseStepper(ValueEnvModule):
+    """Base module for steppers."""
 
     t: int
     delta_t: float

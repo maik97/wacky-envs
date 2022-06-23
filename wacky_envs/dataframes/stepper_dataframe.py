@@ -5,6 +5,7 @@ from wacky_envs.dataframes import StepperDataframe
 
 @dataclass
 class FixStepperDataframe(StepperDataframe):
+    """Dataframe is indexed by step counts, assuming that step timeframes are fixed."""
 
     value: np.ndarray
     idx: int

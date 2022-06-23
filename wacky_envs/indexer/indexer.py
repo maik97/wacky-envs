@@ -3,6 +3,7 @@ from wacky_envs.indexer import BaseIndexer
 
 
 class ByIndex(BaseIndexer):
+    """Assigns a :attr:`cur_choice` of the iterable :attr:`choices` by calling the current value of :attr:`indexer`."""
 
     choices: list
     cur_idx: int

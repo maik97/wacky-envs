@@ -2,15 +2,39 @@ from abc import ABC
 from typing import Any
 import itertools
 
+from dataclasses import dataclass, asdict
+
+
+@dataclass
 class EnvModule(ABC):
     """Parent class for all environment modules."""
-
+    name: str
+    id: int
+    classname: str
     newid = itertools.count()
-    name = __name__
+    """Counting the number of environment moduls for assigning unique ids."""
 
-    def __init__(self):
-        self.id = next(EnvModule.newid)
-        print(f"{self.__class__.__name__}(id={self.id})")
+    def __init__(self, name: str = None):
+        """Assigns name and unique id"""
+        self._id = next(EnvModule.newid)
+        if not hasattr(self, '_name'):
+            self._name = name
+        print(f"{self.classname}(id={self.id})")
+
+    @property
+    def classname(self):
+        """Classname of instance"""
+        return self.__class__.__name__
+
+    @property
+    def name(self):
+        """Either user assigned name or None"""
+        return self._name
+
+    @property
+    def id(self):
+        """Unique id of instance by counting all environment modules."""
+        return self._id
 
     @property
     def token_dict(self):
@@ -20,27 +44,47 @@ class EnvModule(ABC):
             'module_type': self.__class__.__name__,
         }
 
+    @property
+    def watch_dict(self):
+        """Watch instance for debugging"""
+        watch_dict = asdict(self)
+        for k, v in watch_dict.items():
+            if isinstance(v, dict):
+                v_keys = list(v.keys())
+                if 'value' in v_keys and 'name' in v_keys and 'id' in v_keys:
+                    watch_dict[k] = f"{v['classname']}(name={v['name']}, id={v['id']}, value={v['value']})"
+                elif 'name' in v_keys and 'id' in v_keys:
+                    watch_dict[k] = f"{v['classname']}(name={v['name']}, id={v['id']})"
+        return watch_dict
 
+
+@dataclass
 class ValueEnvModule(EnvModule):
-    """Parent class for all environment modules with values"""
+    """
+    Base Module for values
+
+    Note:
+        Attributes :attr:`value` and :attr:`prev_value` are `None`, if :attr:`init_value` is `None`.
+    """
 
     value: Any
     init_value: Any
     prev_value: Any
-    delta_x: Any
+    delta_value: Any
     dtype: type
-    newid = itertools.count()
 
     @property
     def dtype(self) -> type:
-        """Datatype for all object values (e.g., `value`, `init_value`, `prev_value`, `delta_value`, ect.)"""
+        """Datatype for `value`, `init_value`, `prev_value`, `delta_value`, ect."""
         return Any
 
     def __init__(self, init_value: Any = None):
-        """
-        Sets :attr:`init_value` and calls reset to assign `init_value` to `value`.
+        r"""
+        Sets :attr:`init_value` and calls :func:`reset`.
 
-        :param init_value:
+        Note: Attributes :attr:`prev_value` and :attr:`value` are `None`, if :attr:`init_value` is `None`.
+
+        :param init_value: The initial value. Resets to this value at the start of each episode.
         """
         super(ValueEnvModule, self).__init__()
         if init_value is not None:
@@ -105,6 +149,8 @@ class ValueEnvModule(EnvModule):
         Difference between new value and previous value
         after calling the :func:`wacky_envs.EnvModule.set()` method.
         """
+        if self.value is None or self.prev_value is None:
+            return None
         return self.value - self.prev_value
 
     def step(self, _, __, ___) -> None:
@@ -131,6 +177,7 @@ class ValueEnvModule(EnvModule):
         return self.value
 
     def act(self, input):
+        """Placeholder method, which might be called by :class:`wacky_envs.actions.BaseAction`"""
         raise AttributeError(f"{self.__class__.__name__} has no method 'act'.")
 
     @property
@@ -148,9 +195,10 @@ class ValueEnvModule(EnvModule):
             'value': self.value,
             'init_value': self.init_value,
             'prev_value': self.prev_value,
-            'delta_x': self.delta_x,
+            'delta_value': self.delta_value,
         }
 
     @property
     def space(self):
+        """Placeholder attribute, which might be used by :class:`wacky_envs.actions.BaseAction`"""
         raise AttributeError(f"{self.__class__.__name__} has no property 'space'.")

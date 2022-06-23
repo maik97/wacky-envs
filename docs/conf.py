@@ -13,7 +13,6 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../'))
-import wacky_envs
 
 #import sphinx_rtd_theme
 
@@ -35,8 +34,8 @@ release = '0.0.1'
 # ones.
 
 extensions = [
-    'sphinx.ext.autosummary',
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
@@ -51,7 +50,6 @@ extensions = [
 
 autosummary_mock_imports = ['torch', 'numpy', 'scipy', 'pandas', 'matplotlib', 'pygame', 'gym']
 autosummary_generate = True
-
 #plantuml = 'java -jar plantuml.jar'
 
 # -- GraphViz configuration ----------------------------------
@@ -72,9 +70,7 @@ language = 'python'
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
-
 autodoc_mock_imports = ['torch', 'numpy', 'scipy', 'pandas', 'matplotlib', 'pygame', 'gym']
-
 
 autodoc_member_order = 'bysource'
 

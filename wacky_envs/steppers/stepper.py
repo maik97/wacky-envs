@@ -8,6 +8,7 @@ from wacky_envs.steppers import BaseStepper
 
 @dataclass
 class FixStepper(BaseStepper):
+    """Assumes that all steps have a fixed timeframe (or no timeframe)."""
 
     def __init__(self, delta_t: Any = None,  max_t: int = None, init_t: int = 0):
         super(FixStepper, self).__init__(delta_t, max_t, init_t)

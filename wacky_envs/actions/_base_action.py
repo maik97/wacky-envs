@@ -3,6 +3,7 @@ from abc import abstractmethod
 from wacky_envs import EnvModule
 
 class BaseAction(EnvModule):
+    """Base module for actions."""
 
     def __init__(self):
         super(BaseAction, self).__init__()

@@ -7,6 +7,7 @@ from wacky_envs.numbers import WackyMath
 
 @dataclass
 class Condition(BaseCallable):
+    """Calls :attr:`consequence`, if some :attr:`condition` is true."""
 
     condition: WackyMath
     consequence: [BaseCallable]
@@ -18,12 +19,18 @@ class Condition(BaseCallable):
             consequence: [BaseCallable],
             consequence_value: [ValueEnvModule] = None
     ) -> None:
+        """
+        Initialize
+        :param condition:
+        :param consequence:
+        :param consequence_value:
+        """
 
         super(Condition, self).__init__()
 
-        self.condition = condition
-        self.consequence = consequence
-        self.consequence_value = consequence_value
+        self._condition = condition
+        self._consequence = consequence
+        self._consequence_value = consequence_value
 
     def __call__(self) -> None:
 
@@ -32,3 +39,15 @@ class Condition(BaseCallable):
                 self.consequence(self.consequence_value.value)
             else:
                 self.consequence()
+
+    @property
+    def condition(self):
+        return self._condition
+
+    @property
+    def consequence(self):
+        return self._consequence
+
+    @property
+    def consequence_value(self):
+        return self._consequence_value

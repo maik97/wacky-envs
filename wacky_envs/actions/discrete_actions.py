@@ -6,6 +6,7 @@ from wacky_envs.actions import BaseAction
 
 
 class DiscreteAction(BaseAction):
+    """Discrete action that sets a value to :attr:`changeable_decision`."""
 
     def __init__(self, changeable_decision):
         """Test"""
@@ -25,6 +26,7 @@ class DiscreteAction(BaseAction):
 
 
 class AtomizedAction(BaseAction):
+    """Discrete action for an atomized continuous variable."""
 
     def __init__(
             self,
@@ -76,6 +78,7 @@ class AtomizedAction(BaseAction):
 
 
 class DiscreteSinglesToMulti(BaseAction):
+    """Combines discrete actions into a multi-discrete instance."""
 
     def __init__(self, single_discretes: list):
         super(DiscreteSinglesToMulti, self).__init__()

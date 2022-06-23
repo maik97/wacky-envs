@@ -3,6 +3,8 @@ from dataclasses import dataclass
 
 @dataclass
 class SubSteps:
+    """Calls modules of list :attr:`substep_functions` when called."""
+    # TODO: Base Module, __call__(), step(), reset() ?
 
     substep_functions: list
 

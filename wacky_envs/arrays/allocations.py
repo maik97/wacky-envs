@@ -6,6 +6,7 @@ from wacky_envs.arrays import BaseArray
 
 @dataclass
 class Allocations(BaseArray):
+    """Allocate on array through indexing."""
 
     #shape: [int, tuple]
     allow_invalid: bool
@@ -22,9 +23,17 @@ class Allocations(BaseArray):
 
         #self.name = name if name is not None else self.__class__.__name__
         self._shape = shape
-        self.allow_invalid = allow_invalid
-        self.allocator = allocator
+        self._allow_invalid = allow_invalid
+        self._allocator = allocator
         self.reset()
+
+    @property
+    def allow_invalid(self) -> bool:
+        return self._allow_invalid
+
+    @property
+    def allocator(self):
+        return self._allocator
 
     @property
     def places(self) -> np.ndarray:

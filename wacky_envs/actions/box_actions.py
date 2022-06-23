@@ -2,6 +2,7 @@ from gym import spaces
 from wacky_envs.actions import BaseAction
 
 class BoxAction(BaseAction):
+    """Continuous action that sets a value to :attr:`set_value_at`."""
 
     def __init__(self, set_value_at):
         super(BoxAction, self).__init__()

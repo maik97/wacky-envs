@@ -5,6 +5,7 @@ from wacky_envs.observations import BaseObs
 
 
 class BoxObs(BaseObs):
+    """Observes the value of each module in :attr:`value_list`."""
 
     def __init__(self, value_list: list):
         super(BoxObs, self).__init__()

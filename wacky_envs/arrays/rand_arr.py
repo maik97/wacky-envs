@@ -3,6 +3,7 @@ from wacky_envs.arrays import BaseArray
 
 
 class EpisodeRandIntArray(BaseArray):
+    """Randomizes value when resetting."""
 
     def __init__(self, shape, low, high):
         super(EpisodeRandIntArray, self).__init__(low=low, high=high)
@@ -14,6 +15,7 @@ class EpisodeRandIntArray(BaseArray):
 
 
 class StepRandIntArray(BaseArray):
+    """Randomizes value when resetting and on step() calling."""
 
     def __init__(self, shape, low, high):
         super(StepRandIntArray, self).__init__(low=low, high=high)
@@ -28,6 +30,7 @@ class StepRandIntArray(BaseArray):
 
 
 class EpisodeRandFloatArray(BaseArray):
+    """Randomizes value when resetting."""
 
     def __init__(self, shape, low=0.0, high=1.0):
         super(EpisodeRandFloatArray, self).__init__(low=low, high=high)
@@ -39,6 +42,7 @@ class EpisodeRandFloatArray(BaseArray):
 
 
 class StepRandFloatArray(BaseArray):
+    """Randomizes value when resetting and on step() calling."""
 
     def __init__(self, shape, low=0.0, high=1.0):
         super(StepRandFloatArray, self).__init__(low=low, high=high)

@@ -6,20 +6,23 @@ from wacky_envs.numbers import WackyNumber
 
 
 class WackyFloat(WackyNumber):
+    """Instance of changeable float."""
 
     @property
     def dtype(self) -> type:
-        """Datatype `float` for all object values (e.g., `value`, `init_value`, `prev_value`, `delta_value`, ect.)"""
+        """Datatype float for `value`, `init_value`, `prev_value`, `delta_value`, ect."""
         return float
 
-    def __init__(self, init_value: float):
-        """Subclass of :class:`wacky_envs.numbers.WackyNumber`"""
+    def __init__(self, init_value: float, name:str = None):
         super(WackyFloat, self).__init__(init_value)
+        self._name = name
 
     def set_init(self, init_value: float) -> None:
+        """Update initial value."""
         super(WackyFloat, self).set_init(init_value)
 
     def set(self, value: float) -> None:
+        """Update current value."""
         super(WackyFloat, self).set(value)
 
     @property
@@ -43,27 +46,35 @@ class WackyFloat(WackyNumber):
         return spaces.Box(low=-np.inf, high=np.inf, shape=1)
 
     def as_integer_ratio(self) -> Tuple[int, int]:
+        """(From python float) Returns a pair of integers whose ratio is exactly equal to
+        the original float and with a positive denominator."""
         return self._value.as_integer_ratio()
 
     def hex(self) -> str:
+        """(From python float) Converts value to the corresponding hexadecimal number in string form and returns it."""
         return self._value.hex()
 
     def is_integer(self) -> bool:
+        """(From python float) Returns True if the float instance is finite with integral value, and False otherwise."""
         return self._value.is_integer()
 
     @classmethod
     def fromhex(cls, s: str) -> float:
+        """(From python float) Returns a new bytearray object initialized from a string of hex numbers."""
         return float.fromhex(s)
 
     @property
     def real(self) -> float:
+        """(From python float) Returns the real part."""
         return self._value.real
 
     @property
     def imag(self) -> float:
+        """(From python float) Returns the imaginary part."""
         return self._value.imag
 
     def conjugate(self) -> float:
+        """(From python float) Returns the complex conjugate."""
         return self._value.conjugate()
 
     def __add__(self, x: float) -> float:

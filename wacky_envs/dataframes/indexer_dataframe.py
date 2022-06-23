@@ -6,6 +6,8 @@ from wacky_envs.dataframes import BaseDataframe
 
 @dataclass
 class IndexerDataframe(BaseDataframe):
+    """Dataframe is indexed with values specified by indexer."""
+
     value: np.ndarray
     idx: int
 

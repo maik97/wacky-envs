@@ -4,8 +4,14 @@ from wacky_envs.callables import BaseCallable
 
 @dataclass
 class ValueUpdate(BaseCallable):
+    """Updates value of :attr:`to_update` with the value of :attr:`set_from`."""
 
     def __init__(self, to_update, set_from):
+        """
+        Initialize
+        :param to_update:
+        :param set_from:
+        """
         super(ValueUpdate, self).__init__()
         self.to_update = to_update
         self.set_from = set_from
@@ -17,6 +23,7 @@ class ValueUpdate(BaseCallable):
 
 @dataclass
 class ValueTransfer(BaseCallable):
+    """Transfers :attr:`delta_x` from :attr:`trans_from` to the value of :attr:`trans_to`."""
 
     delta_x: [IntConstr, FloatConstr, WackyMath]
     trans_from: [IntConstr, FloatConstr]
@@ -32,12 +39,20 @@ class ValueTransfer(BaseCallable):
             trans_from_func: WackyMath = None,
             trans_to_func: WackyMath = None,
     ):
+        """
+        Initialize
+        :param delta_x:
+        :param trans_from:
+        :param trans_to:
+        :param trans_from_func:
+        :param trans_to_func:
+        """
         super(ValueTransfer, self).__init__()
-        self.delta_x = delta_x
-        self.trans_from = self._init_contr(trans_from)
-        self.trans_to = self._init_contr(trans_to)
-        self.trans_from_func = self._init_trans_func(trans_from_func)
-        self.trans_to_func = self._init_trans_func(trans_to_func)
+        self._delta_x = delta_x
+        self._trans_from = self._init_contr(trans_from)
+        self._trans_to = self._init_contr(trans_to)
+        self._trans_from_func = self._init_trans_func(trans_from_func)
+        self._trans_to_func = self._init_trans_func(trans_to_func)
 
         # TODO: implement dtype property for everthing
         if not isinstance(self.trans_from, type(self.trans_to)):
@@ -61,6 +76,26 @@ class ValueTransfer(BaseCallable):
             return trans_func
         else:
             raise TypeError(f'Expected type: None, WackyMath. Got {type(trans_func)} instead.')
+
+    @property
+    def delta_x(self):
+        return self._delta_x
+
+    @property
+    def trans_from(self):
+        return self._trans_from
+
+    @property
+    def trans_to(self):
+        return self._trans_to
+
+    @property
+    def trans_from_func(self):
+        return self._trans_from_func
+
+    @property
+    def trans_to_func(self):
+        return self._trans_to_func
 
     def __call__(self) -> None:
 

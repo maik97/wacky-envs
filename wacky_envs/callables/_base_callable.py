@@ -4,8 +4,10 @@ from wacky_envs import EnvModule
 
 
 class BaseCallable(EnvModule):
+    """Base module for callables."""
 
     def __init__(self):
+        """Initialize."""
         super(BaseCallable, self).__init__()
 
     @abstractmethod

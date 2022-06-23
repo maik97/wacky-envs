@@ -7,9 +7,10 @@ from gym import spaces
 
 from wacky_envs.numbers import WackyInt, WackyMath
 
-# TODO: update fixes, see FloatConstr
+
 @dataclass
 class IntConstr(WackyInt):
+    """Implements constraints as subclass of :class:`wacky_envs.numbers.WackyInt`"""
 
     # parameter:
     name: str
@@ -50,12 +51,11 @@ class IntConstr(WackyInt):
             action_lock: bool = False,
             name: str = None,
     ) -> None:
-        """Subclass of :class:`wacky_envs.numbers.WackyInt`"""
 
         self._prev_step_values = deque(maxlen=2)
         super().__init__(init_value)
+        self._name = name
 
-        self.name = name if name is not None else self.__class__.__name__
         self.upperbound = self._init_val(upperbound)
         self.lowerbound = self._init_val(lowerbound)
         self.rate_add = self._init_val(rate_add)
@@ -80,13 +80,13 @@ class IntConstr(WackyInt):
 
     @property
     def error_signal(self) -> bool:
-        """Checks if anything was invalid when :method:`wacky_envs.numbers.IntConstr.delta` was called"""
+        """Checks if anything was invalid when :func:`wacky_envs.numbers.IntConstr.delta` was called"""
         return bool(np.any(self.errors))
 
     @property
     def op_name(self) -> str:
         """
-        Name of the current operation when :method:`wacky_envs.numbers.IntConstr.step` is called.
+        Name of the current operation when :func:`wacky_envs.numbers.IntConstr.step` is called.
 
         - 'None': Nothing happens. Assigning a new operation is valid.
         - 'add': Some amount will be added to the current value.
@@ -105,7 +105,7 @@ class IntConstr(WackyInt):
     @property
     def op_id(self) -> int:
         """
-        Id of the current operation when :method:`wacky_envs.numbers.IntConstr.step` is called.
+        Id of the current operation when :func:`wacky_envs.numbers.IntConstr.step` is called.
 
         - 0: 'None'
         - 1: 'add'

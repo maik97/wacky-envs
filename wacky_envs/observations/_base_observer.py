@@ -4,6 +4,7 @@ from wacky_envs import EnvModule
 
 
 class BaseObs(EnvModule):
+    """Base module for observations."""
 
     def __init__(self):
         super(BaseObs, self).__init__()

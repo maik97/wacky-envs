@@ -19,7 +19,7 @@ class WackyEnv(gym.Env):
 
     To initialize a new episode, the agent will call the :func:`self.reset` method of the environment. Here,
     the :func:`BaseStepper.reset` method of the stepper is called first. Afterwards, all :func:`EnvModule.reset`
-    methods are called according to the order of the list :attr:`self.reset_vars`. The whole call order is:
+    methods are called according to the order of the list :attr:`self.reset_modules`. The whole call order is:
 
      - :func:`BaseStepper.reset`
      - List[:func:`EnvModule.reset`]
@@ -29,15 +29,15 @@ class WackyEnv(gym.Env):
         def reset(self) -> np.ndarray:
 
             self._stepper.reset()
-            if self.reset_vars is not None:
-                for var in self.reset_vars:
+            if self.reset_modules is not None:
+                for var in self.reset_modules:
                     var.reset()
             return self.observation
 
     When the Reinforcement Learning Agent decided on an action, the :func:`self.step` method of the environment is called.
     Here, the action module :attr:`self._action` will assign the action to some value of the type :class:`WackyNumber`.
     This is also the case, if the action is an index for something else (e.g., for a callable :class:`BaseCallable`).
-    Next, all :func:`EnvModule.step` methods are called according to the order of the list :attr:`self.step_vars`.
+    Next, all :func:`EnvModule.step` methods are called according to the order of the list :attr:`self.step_modules`.
     Then the stepper counts the next step and adds the step timeframe to the total episode timeframe by calling
     :func:`_stepper.next`. Finally, the returns :attr:`observation`, :attr:`reward`, :attr:`done` and :attr:`info`
     are called. Keep in mind that these attributes are properties. The whole call order is:
@@ -55,8 +55,8 @@ class WackyEnv(gym.Env):
 
             self._action(action)
 
-            if self.step_vars is not None:
-                for var in self.step_vars:
+            if self.step_modules is not None:
+                for var in self.step_modules:
                     try:
                         var.step(self.t, self.delta_t, self.episode_delta_t)
                     except Exception as e:
@@ -71,10 +71,6 @@ class WackyEnv(gym.Env):
 
     """
 
-    metadata = {
-        'render.modes': ['human'],
-    }
-
     def __init__(
             self,
             stepper: BaseStepper,
@@ -82,34 +78,59 @@ class WackyEnv(gym.Env):
             action: BaseAction,
             reward: ValueEnvModule,
             terminator: ValueEnvModule,
-            reset_vars: list = None,
-            step_vars: list = None,
+            reset_modules: list = None,
+            call_modules: list = None,
+            step_modules: list = None,
+            watch_modules: list = None,
     ):
         """
         Assigns all environment modules to their attributes.
 
-        :param stepper [:class:`BaseStepper`]:
+        :param stepper:
             Module to count episode steps and total steps. Traces step and episode timeframes.
-        :param observation [:class:`BaseObs`]:
+        :type stepper: :class:`wacky_envs.stepper.BaseStepper`
+
+        :param observation:
             Module to observe the current state.
-        :param action [:class:`BaseAction`]:
+        :type observation: :class:`wacky_envs.observations.BaseObs`
+
+        :param action:
             Module to assign the agents current actions.
-        :param reward [:class:`ValueEnvModule`]:
+        :type action: :class:`wacky_envs.actions.BaseAction`
+
+        :param reward:
             Module to calculate the current rewards.
-        :param terminator [:class:`ValueEnvModule`]:
+        :type reward: :class:`wacky_envs.ValueEnvModule`
+
+        :param terminator:
             Module to control episode termination.
-        :param reset_vars List[:class:`EnvModule`]:
+        :type terminator: :class:`wacky_envs.ValueEnvModule`
+
+        :param reset_modules:
             List of modules that must reset for a new episode. Order of the list matters.
-        :param step_vars List[:class:`EnvModule`]:
+        :type reset_modules: List[:class:`wacky_envs.EnvModule`]
+
+        :param call_modules:
+            List of modules that are called after action is assigned and before steps are taken. Order of the list matters.
+        :type call_modules: List[:class:`wacky_envs.callables.BaseCallable`]
+
+        :param step_modules:
             List of modules that each call :func:`EnvModule.step` after an action is assigned. Order of the list matters.
+        :type step_modules: List[:class:`wacky_envs.EnvModule`]
+
+        :param watch_modules:
+            List of modules flagged for debugging.
+        :type watch_modules: List[:class:`wacky_envs.EnvModule`]
         """
         self._stepper = stepper
         self._obs = observation
         self._action = action
         self._reward = reward
         self._terminator = terminator
-        self.reset_vars = reset_vars
-        self.step_vars = step_vars
+        self.reset_modules = reset_modules
+        self.call_modules = call_modules
+        self.step_modules = step_modules
+        self.watch_modules = watch_modules
 
     @property
     def observation_space(self) -> spaces.Space:
@@ -154,7 +175,7 @@ class WackyEnv(gym.Env):
         :return: True, if the episode terminates
         :rtype: bool
         """
-        return self._terminator()
+        return self._terminator() or self._stepper.done
 
     @property
     def info(self) -> dict:
@@ -204,19 +225,32 @@ class WackyEnv(gym.Env):
 
         self._action(action)
 
-        if self.step_vars is not None:
-            for var in self.step_vars:
+        if self.call_modules is not None:
+            for module in self.call_modules:
                 try:
-                    var.step(self.t, self.delta_t, self.episode_delta_t)
+                    module()
                 except Exception as e:
                     print(e)
-                    print(var)
+                    print(module)
                     exit()
+
+        if self.step_modules is not None:
+            for module in self.step_modules:
+                try:
+                    module.step(self.t, self.delta_t, self.episode_delta_t)
+                except Exception as e:
+                    print(e)
+                    print(module.watch_dict)
+                    exit()
+
+        if self.watch_modules is not None:
+            for module in self.watch_modules:
+                print(module.watch_dict)
 
         self._stepper.next()
         self._terminator.step(self.t, self.delta_t, self.episode_delta_t)
-        done = self.done
-        return self.observation, self.reward, done, self.info
+        #self._reward.step(self.t, self.delta_t, self.episode_delta_t)
+        return self.observation, self.reward, self.done, self.info
 
     def reset(self) -> np.ndarray:
         """
@@ -226,10 +260,11 @@ class WackyEnv(gym.Env):
         :rtype: np.ndarray
         """
         self._stepper.reset()
-        if self.reset_vars is not None:
-            for var in self.reset_vars:
-                var.reset()
+        if self.reset_modules is not None:
+            for module in self.reset_modules:
+                module.reset()
         return self.observation
 
     def render(self, mode='human'):
+        """Not implemented yet."""
         pass
